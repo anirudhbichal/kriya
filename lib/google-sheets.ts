@@ -92,7 +92,7 @@ export async function fetchProducts(): Promise<Product[]> {
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
 
   if (!sheetId || !apiKey) {
-    console.warn('Google Sheets not configured, using mock data');
+    // Silent fallback to mock data - this is expected in demo mode
     const { mockProducts } = await import('./mock-data');
     return mockProducts;
   }
@@ -132,7 +132,7 @@ export async function fetchCategories(): Promise<Category[]> {
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
 
   if (!sheetId || !apiKey) {
-    console.warn('Google Sheets not configured, using mock data');
+    // Silent fallback to mock data - this is expected in demo mode
     const { mockCategories } = await import('./mock-data');
     return mockCategories;
   }
@@ -172,7 +172,7 @@ export async function fetchStoreConfig(): Promise<StoreConfig> {
   const apiKey = process.env.GOOGLE_SHEETS_API_KEY;
 
   if (!sheetId || !apiKey) {
-    console.warn('Google Sheets not configured, using mock data');
+    // Silent fallback to mock data - this is expected in demo mode
     const { mockStoreConfig } = await import('./mock-data');
     return mockStoreConfig;
   }

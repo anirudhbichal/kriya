@@ -21,7 +21,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       {/* Image Container */}
       <Link href={`/product/${product.id}`} className="block relative aspect-[3/4] overflow-hidden">
         <Image
-          src={product.images[0]}
+          src={product.images?.[0] || product.image || ''}
           alt={product.name}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"

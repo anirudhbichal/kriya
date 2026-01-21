@@ -8,12 +8,6 @@ import {
   Work_Sans 
 } from "next/font/google";
 import "./globals.css";
-import { StoreProvider } from "@/lib/store-context";
-import { DataProvider } from "@/lib/data-context";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import CartDrawer from "@/components/CartDrawer";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 // Neon theme fonts
 const spaceGrotesk = Space_Grotesk({
@@ -51,7 +45,7 @@ const workSans = Work_Sans({
 
 export const metadata: Metadata = {
   title: "Kriya | E-commerce Made Simple",
-  description: "Configurable e-commerce powered by Google Sheets",
+  description: "Configurable e-commerce SaaS platform",
 };
 
 export default function RootLayout({
@@ -72,19 +66,7 @@ export default function RootLayout({
           antialiased
         `}
       >
-        <DataProvider>
-          <StoreProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <CartDrawer />
-            <ThemeSwitcher />
-          </StoreProvider>
-        </DataProvider>
+        {children}
       </body>
     </html>
   );

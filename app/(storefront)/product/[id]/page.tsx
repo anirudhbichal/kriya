@@ -87,9 +87,9 @@ export default function ProductPage() {
           <div className="space-y-4">
             {/* Main Image */}
             <div className="relative aspect-[3/4] rounded-[var(--radius)] overflow-hidden bg-[var(--card)] border border-[var(--border)]">
-              {product.images[selectedImage] && (
+              {(product.images?.[selectedImage] || product.image) && (
                 <Image
-                  src={product.images[selectedImage]}
+                  src={product.images?.[selectedImage] || product.image || ''}
                   alt={product.name}
                   fill
                   className="object-cover"
@@ -117,7 +117,7 @@ export default function ProductPage() {
             </div>
 
             {/* Thumbnails */}
-            {product.images.length > 1 && (
+            {product.images && product.images.length > 1 && (
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {product.images.map((image, index) => (
                   <button
