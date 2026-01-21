@@ -1,26 +1,280 @@
 @import "tailwindcss";
 
+/* Theme CSS Variables - set dynamically by JavaScript */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0a0a0f;
+  --backgroundAlt: #12121a;
+  --foreground: #ffffff;
+  --foregroundMuted: #a1a1aa;
+  --primary: #00ff88;
+  --primaryGlow: rgba(0, 255, 136, 0.4);
+  --secondary: #ff00ff;
+  --secondaryGlow: rgba(255, 0, 255, 0.4);
+  --accent: #00d4ff;
+  --accentGlow: rgba(0, 212, 255, 0.4);
+  --border: #27272a;
+  --card: #18181b;
+  --success: #00ff88;
+  --error: #ff3366;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --radius: 0.5rem;
+  --theme-glow: 1;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-alt: var(--backgroundAlt);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foregroundMuted);
+  --color-primary: var(--primary);
+  --color-primary-glow: var(--primaryGlow);
+  --color-secondary: var(--secondary);
+  --color-secondary-glow: var(--secondaryGlow);
+  --color-accent: var(--accent);
+  --color-accent-glow: var(--accentGlow);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --radius: var(--radius);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--backgroundAlt);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foregroundMuted);
+}
+
+/* Custom Utilities */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Glow Effects - only when theme supports it */
+.glow-primary {
+  box-shadow: 0 0 20px var(--primaryGlow), 0 0 40px var(--primaryGlow);
+}
+
+.glow-secondary {
+  box-shadow: 0 0 20px var(--secondaryGlow), 0 0 40px var(--secondaryGlow);
+}
+
+.glow-accent {
+  box-shadow: 0 0 20px var(--accentGlow), 0 0 40px var(--accentGlow);
+}
+
+.text-glow-primary {
+  text-shadow: 0 0 20px var(--primaryGlow);
+}
+
+.text-glow-secondary {
+  text-shadow: 0 0 20px var(--secondaryGlow);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Animated gradient background */
+.animated-gradient {
+  background: linear-gradient(
+    135deg,
+    var(--primary),
+    var(--secondary),
+    var(--accent),
+    var(--primary)
+  );
+  background-size: 400% 400%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Slide-in animations */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease forwards;
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.3s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease forwards;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+  opacity: 0;
+  animation: slide-up 0.5s ease forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.45s; }
+
+/* Button base styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--background);
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--foreground);
+  border: 2px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Card styles */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 9999px;
+}
+
+.badge-primary {
+  background: var(--primary);
+  color: var(--background);
+}
+
+.badge-secondary {
+  background: var(--secondary);
+  color: white;
+}
+
+/* Image placeholder shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--backgroundAlt) 25%,
+    var(--border) 50%,
+    var(--backgroundAlt) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
