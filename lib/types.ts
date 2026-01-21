@@ -8,7 +8,8 @@ export interface Product {
   description: string;
   price: number;
   compareAtPrice?: number;
-  images: string[];
+  images?: string[];
+  image?: string; // Single image for simplified dashboard
   category: string;
   tags: string[];
   inStock: boolean;
@@ -48,5 +49,6 @@ export interface Category {
   id: string;
   name: string;
   slug: string;
+  description?: string;
   image?: string;
 }

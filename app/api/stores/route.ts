@@ -1,9 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { StoreInsert } from '@/lib/database.types'
+
+// Check if Supabase is configured
+function isSupabaseConfigured() {
+  return !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+}
 
 // GET /api/stores - Get user's stores
 export async function GET() {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json(
+      { error: 'Database not configured. Running in demo mode.' },
+      { status: 503 }
+    )
+  }
+
   try {
+    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -39,7 +52,15 @@ export async function GET() {
 
 // POST /api/stores - Create a new store
 export async function POST(request: NextRequest) {
+  if (!isSupabaseConfigured()) {
+    return NextResponse.json(
+      { error: 'Database not configured. Running in demo mode.' },
+      { status: 503 }
+    )
+  }
+
   try {
+    const { createClient } = await import('@/lib/supabase/server')
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -91,7 +112,6 @@ export async function POST(request: NextRequest) {
 
     if (count && count >= 1) {
       // For now, limit to 1 store on free plan
-      // TODO: Check user's plan for higher limits
       return NextResponse.json(
         { error: 'You have reached your store limit. Upgrade to create more stores.' },
         { status: 403 }
@@ -99,18 +119,20 @@ export async function POST(request: NextRequest) {
     }
 
     // Create store
+    const storeData: StoreInsert = {
+      owner_id: user.id,
+      name,
+      slug,
+      tagline: tagline || null,
+      theme: theme || 'neon',
+      currency: currency || 'USD',
+      currency_symbol: currencySymbol || '$',
+      google_sheet_id: googleSheetId || null,
+    }
+
     const { data: store, error } = await supabase
       .from('stores')
-      .insert({
-        owner_id: user.id,
-        name,
-        slug,
-        tagline: tagline || null,
-        theme: theme || 'neon',
-        currency: currency || 'USD',
-        currency_symbol: currencySymbol || '$',
-        google_sheet_id: googleSheetId || null,
-      })
+      .insert(storeData as never)
       .select()
       .single()
 

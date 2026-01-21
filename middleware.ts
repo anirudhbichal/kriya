@@ -1,48 +1,36 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
   // Add pathname to headers for tenant resolution
   const requestHeaders = new Headers(request.headers)
   requestHeaders.set('x-pathname', request.nextUrl.pathname)
   
-  // Update Supabase session
-  const response = await updateSession(request)
-  
-  // Copy the pathname header to response
+  // Create response with pathname header
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  })
   response.headers.set('x-pathname', request.nextUrl.pathname)
 
-  const host = request.headers.get('host') || ''
-  const baseDomain = process.env.NEXT_PUBLIC_BASE_DOMAIN || 'kriya.store'
+  // Skip Supabase session management if not configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
   
-  // Skip middleware for API routes, static files, etc.
-  if (
-    request.nextUrl.pathname.startsWith('/_next') ||
-    request.nextUrl.pathname.startsWith('/api') ||
-    request.nextUrl.pathname.startsWith('/static') ||
-    request.nextUrl.pathname.includes('.')
-  ) {
+  if (!supabaseUrl || !supabaseKey) {
+    // Supabase not configured - continue without session management
+    // This allows the app to work in demo mode with mock data
     return response
   }
 
-  // Development mode: allow everything
-  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+  // Only import and use Supabase middleware if configured
+  try {
+    const { updateSession } = await import('@/lib/supabase/middleware')
+    return updateSession(request)
+  } catch (error) {
+    console.error('Supabase middleware error:', error)
     return response
   }
-
-  // Main domain (www.kriya.store or kriya.store) - show landing/marketing page
-  if (host === baseDomain || host === `www.${baseDomain}`) {
-    // Rewrite to landing page
-    if (!request.nextUrl.pathname.startsWith('/landing')) {
-      // For now, just pass through - we'll add a landing page later
-      return response
-    }
-  }
-
-  // Subdomain or custom domain - this is a store
-  // The tenant resolution happens in the page/layout via getCurrentStore()
-  
-  return response
 }
 
 export const config = {
